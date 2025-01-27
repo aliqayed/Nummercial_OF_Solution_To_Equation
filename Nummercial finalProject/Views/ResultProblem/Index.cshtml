@@ -1,0 +1,320 @@
+﻿@model IEnumerable<ResultViewModelController>
+@{
+    ViewData["Title"] = "Solved Problem";
+}
+
+<h1 class="text-center text-primary my-4">Solved Problem</h1>
+
+<div class="container">
+    <!-- Header Section -->
+    <h4 class="text-secondary">Results</h4>
+    <hr />
+    <div class="container my-4">
+        <div class="row justify-content-center align-items-center">
+
+            <div class="col-md-6" style="background-color:aliceblue;">
+                <canvas id="functionGraph" class="w-100 border rounded" style="height: 400px;">
+                </canvas>
+            </div>
+
+        </div>
+    </div>
+
+    <div>
+        <h4 style="color:#b1b7df;">
+            ShapeFunction is:
+            @if (TempData["SHapeFunction"] != null)
+            {
+                <span class="font-weight-bold" style="color:aliceblue;">
+                    @TempData["SHapeFunction"]  , <bold> x0 </bold> = @TempData["x0"] ,
+                    <bold> y0 </bold> =@TempData["y0"]
+                </span>
+
+            }
+            else
+            {
+                <span class="text-danger">No function defined.</span>
+            }
+        </h4>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-container d-flex mt-4 gap-3">
+
+        <div class="table-container" style="flex: 1;">
+            <h4 class="text-dark">Calculated Results:</h4>
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="bg-info text-white">
+                    <tr>
+                        <th>#</th>
+                        <th>X</th>
+                        <th>Y</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Select((value, index) =>
+                    new { value, index }))
+                    {
+                        <tr>
+                            <td>@(item.index)</td>
+                            <td>@item.value.X</td>
+                            <td>@item.value.y</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // إعداد القيم من النموذج
+        const xValues = @Html.Raw(Json.Serialize(Model.Select(m => m.X).ToList()));
+        const yValues = @Html.Raw(Json.Serialize(Model.Select(m => m.y).ToList()));
+
+        // إعداد المخطط البياني باستخدام Chart.js
+        const ctx = document.getElementById('functionGraph').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: [{
+                    label: '@ViewBag.NameFunction',
+                    data: yValues,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'X Values'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Y Values'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    @* there is problem  *@
+
+    @*
+   <script>
+        @{
+            // Ensure TempData values are correctly passed to the view
+            string shapeFunction = TempData["SHapeFunction"] as string ?? "x * x + y * y + x * y + y * x + 8";
+            float x0 = Convert.ToSingle(TempData["x0"] ?? 0);
+            float y0 = Convert.ToSingle(TempData["y0"] ?? 0);
+        }
+
+        const shapeFunction = "@shapeFunction";
+        const x0 = @x0;
+        const y0 = @y0;
+
+        console.log("Shape Function:", shapeFunction);
+        console.log("x0:", x0);
+        console.log("y0:", y0);
+
+        window.onload = function () {
+            const canvas = document.getElementById('shapeCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // تحويل الإحداثيات الرياضية إلى إحداثيات Canvas
+            function toCanvasCoords(x, y) {
+                const canvasX = canvas.width / 2 + x;
+                const canvasY = canvas.height / 2 - y;
+                return { canvasX, canvasY };
+            }
+
+            // رسم الشبكة (Grid) لتوضيح الرسم
+            function drawGrid() {
+                ctx.strokeStyle = "#ddd";
+                ctx.lineWidth = 0.5;
+
+                for (let i = 0; i < canvas.width; i += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, canvas.height);
+                    ctx.stroke();
+                }
+
+                for (let j = 0; j < canvas.height; j += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, j);
+                    ctx.lineTo(canvas.width, j);
+                    ctx.stroke();
+                }
+            }
+
+            drawGrid(); // رسم الشبكة
+
+            // رسم نقطة البداية (x0, y0)
+            ctx.beginPath();
+            const { canvasX: pointX, canvasY: pointY } = toCanvasCoords(x0, y0);
+            ctx.arc(pointX, pointY, 5, 0, 2 * Math.PI); // دائرة صغيرة
+            ctx.fillStyle = "red";
+            ctx.fill();
+
+            // رسم الدالة الرياضية بناءً على ShapeFunction
+            ctx.beginPath();
+            try {
+                // تحويل التعبير من `x^2` إلى `x * x` والعلامات الأخرى
+                const transformedShapeFunction = shapeFunction.replace(/x\^2/g, "x * x")
+                                                              .replace(/y\^2/g, "y * y")
+                                                              .replace(/x\*y/g, "x * y")
+                                                              .replace(/y\*x/g, "y * x");
+
+                // إنشاء دالة رياضية باستخدام Function
+                const mathFunction = new Function("x", "y", `return ${transformedShapeFunction};`);
+
+                const startX = -canvas.width / 2;
+                const endX = canvas.width / 2;
+                const step = 1;
+
+                for (let x = startX; x <= endX; x += step) {
+                    const y = mathFunction(x, y0); // تقييم الدالة
+
+                    const { canvasX, canvasY } = toCanvasCoords(x, y); // تحويل الإحداثيات
+
+                    if (x === startX) {
+                        ctx.moveTo(canvasX, canvasY); // الانتقال للنقطة الأولى
+                    } else {
+                        ctx.lineTo(canvasX, canvasY); // رسم الخط للنقطة التالية
+                    }
+                }
+
+                ctx.strokeStyle = "#3243af";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            } catch (error) {
+                console.error("Error evaluating ShapeFunction:", error);
+                ctx.font = "20px Arial";
+                ctx.fillStyle = "red";
+                ctx.textAlign = "center";
+                ctx.fillText("Invalid function provided", canvas.width / 2, canvas.height / 2);
+            }
+        };
+    </script>
+    *@
+    <script>
+        @{
+            // Ensure TempData values are correctly passed to the view
+            string shapeFunction = TempData["SHapeFunction"] as string ?? "x * x + y * y + x * y + y * x + 8";
+            float x0 = Convert.ToSingle(TempData["x0"] ?? 0);
+            float y0 = Convert.ToSingle(TempData["y0"] ?? 0);
+        }
+
+        const shapeFunction = "@shapeFunction";
+        const x0 = @x0;
+        const y0 = @y0;
+
+        console.log("Shape Function:", shapeFunction);
+        console.log("x0:", x0);
+        console.log("y0:", y0);
+
+        window.onload = function () {
+            const canvas = document.getElementById('shapeCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // تحويل الإحداثيات الرياضية إلى إحداثيات Canvas
+            function toCanvasCoords(x, y) {
+                const canvasX = canvas.width / 2 + x;
+                const canvasY = canvas.height / 2 - y;
+                return { canvasX, canvasY };
+            }
+
+            // رسم الشبكة (Grid) لتوضيح الرسم
+            function drawGrid() {
+                ctx.strokeStyle = "#ddd";
+                ctx.lineWidth = 0.5;
+
+                for (let i = 0; i < canvas.width; i += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, canvas.height);
+                    ctx.stroke();
+                }
+
+                for (let j = 0; j < canvas.height; j += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, j);
+                    ctx.lineTo(canvas.width, j);
+                    ctx.stroke();
+                }
+            }
+
+            drawGrid(); // رسم الشبكة
+
+            // رسم نقطة البداية (x0, y0)
+            ctx.beginPath();
+            const { canvasX: pointX, canvasY: pointY } = toCanvasCoords(x0, y0);
+            ctx.arc(pointX, pointY, 5, 0, 2 * Math.PI); // دائرة صغيرة
+            ctx.fillStyle = "red";
+            ctx.fill();
+
+            // رسم الدالة الرياضية بناءً على ShapeFunction
+            ctx.beginPath();
+            try {
+                // تحويل التعبير من `x^2` إلى `x * x` والعلامات الأخرى
+                const transformedShapeFunction = shapeFunction.replace(/x\^2/g, "x * x")
+                                                              .replace(/y\^2/g, "y * y")
+                                                              .replace(/x\*y/g, "x * y")
+                                                              .replace(/y\*x/g, "y * x");
+
+                // إنشاء دالة رياضية باستخدام Function
+                const mathFunction = new Function("x", "y", `return ${transformedShapeFunction};`);
+
+                const startX = -canvas.width / 2;
+                const endX = canvas.width / 2;
+                const step = 1;
+
+                for (let x = startX; x <= endX; x += step) {
+                    const y = mathFunction(x, y0); // تقييم الدالة
+
+                    const { canvasX, canvasY } = toCanvasCoords(x, y); // تحويل الإحداثيات
+
+                    if (x === startX) {
+                        ctx.moveTo(canvasX, canvasY); // الانتقال للنقطة الأولى
+                    } else {
+                        ctx.lineTo(canvasX, canvasY); // رسم الخط للنقطة التالية
+                    }
+                }
+
+                ctx.strokeStyle = "#3243af";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            } catch (error) {
+                console.error("Error evaluating ShapeFunction:", error);
+                ctx.font = "20px Arial";
+                ctx.fillStyle = "red";
+                ctx.textAlign = "center";
+                ctx.fillText("Invalid function provided", canvas.width / 2, canvas.height / 2);
+            }
+        };
+    </script>
+}

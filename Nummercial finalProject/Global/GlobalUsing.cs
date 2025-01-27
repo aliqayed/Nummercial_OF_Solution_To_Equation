@@ -1,0 +1,17 @@
+﻿global using AutoMapper;
+global using AutoMapper.Configuration.Annotations;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Mvc.Rendering;
+global using Microsoft.EntityFrameworkCore;
+global using Nummercial_finalProject.Data;
+global using Nummercial_finalProject.Mapper;
+global using Nummercial_finalProject.Models;
+global using Nummercial_finalProject.Services;
+global using Nummercial_finalProject.ViewModelController;
+global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
+global using System.Diagnostics;
+global using System.Reflection;
+global using Expression = NCalc.Expression;
+global using Governments = Nummercial_finalProject.Models.Governments;
+global using Stages = Nummercial_finalProject.ViewModelController.Stages;

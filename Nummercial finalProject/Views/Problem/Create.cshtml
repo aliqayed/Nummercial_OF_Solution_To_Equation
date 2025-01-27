@@ -1,0 +1,151 @@
+﻿@model ProblemViewModelController
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<head>
+
+    <style>
+        .container {
+            margin-top: 0px;
+        }
+
+        .row {
+            justify-content: center;
+        }
+
+
+        .gradient-bg {
+            color: white;
+            height: 80px;
+            width: 100%;
+            max-width: 800px;
+            background: linear-gradient(90deg, rgba(119,168,88,0.76) 19%, rgba(15,50,154,0.76) 40%, rgba(64,65,180,0.87) 60%, rgba(26,18,77,0.77) 79%, rgba(183,252,69,0.82) 100%);
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        /* Form Styles */
+        .form-label, .form-control, .form-select {
+            font-family: 'Arial', sans-serif;
+            border-radius: 5px;
+        }
+
+        .form-control, .form-select {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        /* Form Button */
+        .btn-success {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        /* Add space between form elements */
+        .mb-3 {
+            margin-bottom: 20px;
+        }
+
+        /* Input placeholder styles */
+        ::placeholder {
+            color: #6c757d; /* Light placeholder color */
+        }
+
+        /* Form Container */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Responsive Design */
+
+
+        .form-container {
+            padding: 0 15px;
+        }
+    </style>
+</head>
+<div class="container bounce">
+    <div class="inline-text">
+        <!-- القسم الأول -->
+        <p class="left-text">
+            <strong>
+                "رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ"
+            </strong>
+        </p>
+
+      
+    </div>
+</div>
+
+
+
+<hr class="custom-hr" style="height:10px" />
+
+<div class="container form-container ">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Name Function -->
+                <div class="mb-3">
+                    <label asp-for="NameFunction" class="form-label">
+                        Function Shape
+                    </label>
+                    <input asp-for="NameFunction" class="form-control" placeholder="Enter function Shape" />
+                    <span asp-validation-for="NameFunction" class="text-danger"></span>
+                </div>
+
+                <!-- Initial Value -->
+                <div class="mb-3">
+                    <label asp-for="InitialValue" class="form-label">Initial Value</label>
+                    <input asp-for="InitialValue" class="form-control" placeholder="Enter initial value" />
+                    <span asp-validation-for="InitialValue" class="text-danger"></span>
+                </div>
+
+                <!-- Last Value -->
+                <div class="mb-3">
+                    <label asp-for="LastValue" class="form-label">Last Value</label>
+                    <input asp-for="LastValue" class="form-control" placeholder="Enter last value" />
+                    <span asp-validation-for="LastValue" class="text-danger"></span>
+                </div>
+
+                <!-- Y0 -->
+                <div class="mb-3">
+                    <label asp-for="Y0" class="form-label">Y0 Value</label>
+                    <input asp-for="Y0" class="form-control" placeholder="Enter Y0 value" />
+                    <span asp-validation-for="Y0" class="text-danger"></span>
+                </div>
+
+                <!-- H -->
+                <div class="mb-3">
+                    <label asp-for="H" class="form-label">H</label>
+                    <input asp-for="H" class="form-control" placeholder="Enter a H" />
+                    <span asp-validation-for="H" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-secondary mt-3">
+                        Show Solved
+                    </button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }<script src="~/js/site.js"></script>
+  
+}

@@ -1,0 +1,87 @@
+﻿
+@model PersonViewModelController
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="container text-center d-flex flex-column justify-content-center vh-5">
+    <h3 class="text-primary fw-bold custom-font">
+        <i class="bi bi-braces"></i>
+        Welcome to Program
+    </h3>
+    <p class="text-secondary fs-5">Please Enter Your Data</p>
+</div>
+
+<hr class="custom-hr" style="height:10px" />
+
+<div class="row d-flex justify-content-center align-items-center vh-70 ">
+    <div class="col-md-4 bg-white shadow-lg rounded p-4 text-center">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- First Name -->
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label">First Name</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label">Last Name</label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+                <label asp-for="Telephone" class="control-label">Phone</label>
+                <input asp-for="Telephone" class="form-control" />
+                <span asp-validation-for="Telephone" class="text-danger"></span>
+            </div>
+
+            <!-- Stage -->
+            <div class="form-group">
+                <label asp-for="Stage" class="control-label">Stage</label>
+                <select asp-for="Stage" class="form-control" asp-items="ViewBag.Stage" aria-label="Select Stage"></select>
+                <span asp-validation-for="Stage" class="text-danger"></span>
+            </div>
+
+            <!-- Local Governments -->
+            <div class="form-group">
+                <label asp-for="LocalGovernments" class="control-label">Select Governorates</label>
+                <select asp-for="LocalGovernments" class="form-control"
+                        asp-items="@(new SelectList(Enum.GetValues(typeof(Nummercial_finalProject.ViewModelController.Governments))
+                                    .Cast<Nummercial_finalProject.ViewModelController.Governments>()
+                                    .Select(g => new SelectListItem
+                                    {
+                                        Text = Nummercial_finalProject.ViewModelController.EnumExtensions.GetDisplayName(g),
+                                        Value = g.ToString()
+                                    }), "Value", "Text"))"
+                        multiple aria-label="Select Governorates">
+                </select>
+                <span asp-validation-for="LocalGovernments" class="text-danger"></span>
+            </div>
+
+            <!-- Note -->
+            <div class="form-group">
+                <label asp-for="Note" class="control-label">Note</label>
+                <input asp-for="Note" class="form-control" />
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit" class="btn btn-outline-success mt-3">
+                    Create and Move to Problem
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
